@@ -1,0 +1,38 @@
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "0xProto Nerd Font Mono", "Font Awesome 6 Free", Roboto, monospace;
+    font-size: 13px;
+    min-height: 0;
+}
+
+window#waybar {
+    background-color: rgba(30, 30, 46, 0.85);
+    color: #ffffff;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+#workspaces button {
+    padding: 0 8px;
+    background-color: transparent;
+    color: #888888;
+}
+
+#workspaces button.focused {
+    color: #ffffff;
+    border-bottom: 2px solid #89b4fa;
+}
+
+#cpu, #memory, #network, #language, #pulseaudio, #clock, #custom-weather {
+    padding: 0 6px;
+    color: #cdd6f4;
+}
+
+#custom-separator, #custom-separator_center {
+    color: #585b70;
+    padding: 0 4px;
+}
+
+#tray {
+    padding-left: 8px;
+}

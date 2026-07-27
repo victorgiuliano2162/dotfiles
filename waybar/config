@@ -1,0 +1,105 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 30,
+    "spacing": 0,
+
+    // Módulos da Esquerda
+    "modules-left": [
+        "sway/workspaces",
+        "sway/mode"
+    ],
+
+    // Módulos do Centro (Temperatura do ambiente + Relógio)
+    "modules-center": [
+        "custom/weather",
+        "custom/separator_center",
+        "clock"
+    ],
+
+    // Módulos da Direita (com Teclado entre Net e Vol)
+    "modules-right": [
+        "cpu",
+        "custom/separator",
+        "memory",
+        "custom/separator",
+        "network",
+        "custom/separator",
+        "sway/language",
+        "custom/separator",
+        "pulseaudio",
+        "tray"
+    ],
+
+    // --- Módulos do Centro ---
+
+    "custom/weather": {
+        "format": "Temp: {}",
+        "interval": 1800,
+        "exec": "curl -s 'https://wttr.in/?format=%t'",
+        "tooltip": true
+    },
+
+    "custom/separator_center": {
+        "format": "|",
+        "interval": "once",
+        "tooltip": false
+    },
+
+    "clock": {
+        "format": " {:%H:%M - %d/%m/%Y}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+
+    // --- Módulos da Direita ---
+
+    "cpu": {
+        "interval": 2,
+        "format": "CPU: {usage}% @ {avg_frequency}GHz",
+        "tooltip": true
+    },
+
+    "memory": {
+        "interval": 2,
+        "format": "Mem: {used:0.1f}GiB/{total:0.1f}GiB",
+        "tooltip-format": "Uso: {percentage}%"
+    },
+
+"network": {
+        "interval": 5,
+        "format-wifi": "Net: {essid}",
+        "format-ethernet": "Net: Cabeada",
+        "format-disconnected": "Net: Desconectado",
+        "tooltip-format": "Sinal: {signaldBm}dBm ({signalStrength}%)",
+        "on-click": "nm-connection-editor"
+    },
+ 
+    "sway/language": {
+        "format": "{}",
+        "format-short": "{}",
+        "on-click": "swaymsg input type:keyboard xkb_switch_layout next"
+    },
+
+"pulseaudio": {
+        "format": "Vol: {volume}% ",
+        "format-muted": "Vol: Mudo ",
+        "on-click": "pavucontrol"
+    },
+
+    // Separador personalizado "|"
+    "custom/separator": {
+        "format": "|",
+        "interval": "once",
+        "tooltip": false
+    },
+
+    "sway/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": true,
+        "format": "{name}"
+    },
+
+    "tray": {
+        "spacing": 8
+    }
+}
