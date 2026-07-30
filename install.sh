@@ -7,7 +7,7 @@ mkdir -p ~/.config
 DOTFILES_DIR="$HOME/dotfiles"
 
 # Pastas da ~/.config
-CONFIG_FOLDERS=("sway" "waybar" "kitty" "gtk-3.0")
+CONFIG_FOLDERS=("sway" "waybar" "kitty" "gtk-3.0" "wofi")
 
 for folder in "${CONFIG_FOLDERS[@]}"; do
     TARGET="$HOME/.config/$folder"
