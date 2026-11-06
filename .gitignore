@@ -1,0 +1,13 @@
+# Backups e arquivos temporários de editores
+*.bak
+*.save
+*.swp
+*~
+
+# Pastas de backup antigas
+waybar/old/
+swaync/old/
+
+# Estado interno e buffers do micro
+micro/buffers/
+micro/syntax/
