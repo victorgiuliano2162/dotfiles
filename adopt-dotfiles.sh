@@ -1,80 +1,133 @@
 #!/usr/bin/env bash
 set -e
 
-echo "📦 Adotando configurações para o diretório dotfiles..."
+echo "📦 Adotando e sincronizando configurações para o diretório dotfiles..."
 
 DOTFILES_DIR="$HOME/dotfiles"
 CONFIG_DIR="$HOME/.config"
+BACKUP_DIR="$HOME/.cache/dotfiles-backup/$(date +'%Y%m%d_%H%M%S')"
 
-# Lista de pastas que você quer gerenciar
-CONFIG_FOLDERS=("sway" "waybar" "kitty" "gtk-3.0" "wofi")
+# Pastas da ~/.config gerenciadas pelo repositório
+CONFIG_FOLDERS=(
+    # Ambiente Sway / Wayland
+    "sway"
+    "swaync"
+    "waybar"
+    "wofi"
+    "kitty"
+    "foot"
+    "kanshi"
+    "nwg-displays"
+    "gsimplecal"
+    "hypr"
+    # Editores, Shell e CLI
+    "nvim"
+    "yazi"
+    "btop"
+    "bottom"
+    "micro"
+    "fish"
+)
 
-# Cria o diretório dotfiles se não existir
-mkdir -p "$DOTFILES_DIR"
+# Arquivos da raiz da $HOME (formato "arquivo_na_home:arquivo_no_dotfiles")
+HOME_FILES=(
+    ".zshrc:zshrc"
+    ".p10k.zsh:p10k.zsh"
+    ".gitconfig:gitconfig"
+)
+
+mkdir -p "$DOTFILES_DIR" "$CONFIG_DIR"
 
 for folder in "${CONFIG_FOLDERS[@]}"; do
     TARGET="$CONFIG_DIR/$folder"
     SOURCE="$DOTFILES_DIR/$folder"
 
-    echo "Processando: $folder"
+    echo "Processando ~/.config/$folder..."
 
-    # Caso 1: ~/.config/pasta é um link simbólico
+    # Caso 1: ~/.config/pasta já é um link simbólico
     if [ -L "$TARGET" ]; then
-        # Verifica se aponta para o lugar certo
         if [ "$(readlink "$TARGET")" = "$SOURCE" ]; then
-            echo "  ✅ Link já existe e aponta para o local correto."
+            echo "  ✅ Link já existe e aponta para $SOURCE"
         else
-            echo "  ⚠️  Link existente aponta para outro lugar. Recriando..."
-            rm "$TARGET"
-            ln -sf "$SOURCE" "$TARGET"
-            echo "  ✅ Link recriado."
+            mkdir -p "$BACKUP_DIR"
+            mv "$TARGET" "$BACKUP_DIR/${folder}.symlink.bak"
+            ln -s "$SOURCE" "$TARGET"
+            echo "  🔗 Link atualizado para $SOURCE"
         fi
         continue
     fi
 
-    # Caso 2: ~/.config/pasta é um diretório comum (ou arquivo)
-    if [ -e "$TARGET" ]; then
-        # Se for um diretório comum, precisamos mover para o dotfiles
-        if [ -d "$TARGET" ]; then
-            if [ -d "$SOURCE" ]; then
-                # A origem já existe em dotfiles → fazemos backup do destino e linkamos
-                echo "  ⚠️  $SOURCE já existe. Fazendo backup de $TARGET para $TARGET.bak"
-                mv "$TARGET" "$TARGET.bak"
-            else
-                # Move a pasta inteira para dotfiles
-                echo "  📂 Movendo $TARGET para $SOURCE"
-                mv "$TARGET" "$SOURCE"
-            fi
+    # Caso 2: ~/.config/pasta é um diretório real
+    if [ -d "$TARGET" ]; then
+        # Se houver um repositório .git aninhado dentro da pasta, faz backup dele
+        if [ -d "$TARGET/.git" ]; then
+            mkdir -p "$BACKUP_DIR"
+            echo "  ⚠️  Movendo .git aninhado de $TARGET/.git para $BACKUP_DIR/${folder}.git.bak"
+            mv "$TARGET/.git" "$BACKUP_DIR/${folder}.git.bak"
+        fi
+
+        if [ -d "$SOURCE" ]; then
+            echo "  🔄 Atualizando $SOURCE com o conteúdo mais recente de $TARGET"
+            cp -a "$TARGET/." "$SOURCE/"
+            mkdir -p "$BACKUP_DIR"
+            mv "$TARGET" "$BACKUP_DIR/$folder"
         else
-            # É um arquivo (não esperado, mas tratamos)
-            echo "  ⚠️  $TARGET é um arquivo, não um diretório. Movendo como arquivo."
+            echo "  📂 Movendo $TARGET para $SOURCE"
             mv "$TARGET" "$SOURCE"
         fi
+
+        ln -s "$SOURCE" "$TARGET"
+        echo "  🔗 Link criado: $TARGET -> $SOURCE"
+        continue
     fi
 
-    # Agora, se a origem existe em dotfiles, cria o link
-    if [ -d "$SOURCE" ] || [ -f "$SOURCE" ]; then
-        ln -sf "$SOURCE" "$TARGET"
-        echo "  🔗 Link criado: $TARGET -> $SOURCE"
+    # Caso 3: ~/.config/pasta não existe, mas já existe em ~/dotfiles (ex.: foot)
+    if [ -d "$SOURCE" ]; then
+        ln -s "$SOURCE" "$TARGET"
+        echo "  🔗 Link criado a partir do dotfiles: $TARGET -> $SOURCE"
     else
-        echo "  ❌ ERRO: $SOURCE não foi criado. Pulei essa pasta."
+        echo "  ⏭️  Pasta $folder não encontrada em ~/.config nem em ~/dotfiles. Pulando."
     fi
 done
 
-# Tratamento especial para .zshrc (se quiser)
-if [ -f "$HOME/.zshrc" ] && [ ! -L "$HOME/.zshrc" ]; then
-    if [ -f "$DOTFILES_DIR/zshrc" ]; then
-        echo "  ⚠️  $DOTFILES_DIR/zshrc já existe. Fazendo backup de ~/.zshrc"
-        mv "$HOME/.zshrc" "$HOME/.zshrc.bak"
-    else
-        echo "📂 Movendo ~/.zshrc para $DOTFILES_DIR/zshrc"
-        mv "$HOME/.zshrc" "$DOTFILES_DIR/zshrc"
-    fi
-    ln -sf "$DOTFILES_DIR/zshrc" "$HOME/.zshrc"
-    echo "🔗 Link criado para .zshrc"
-elif [ -L "$HOME/.zshrc" ]; then
-    echo "✅ .zshrc já é um link."
-fi
+echo ""
+echo "Processando arquivos da \$HOME..."
 
-echo "✅ Concluído! Agora você pode commitar as mudanças no Git:"
-echo "   cd $DOTFILES_DIR && git add . && git commit -m 'Adotando configurações'"
+for entry in "${HOME_FILES[@]}"; do
+    HOME_NAME="${entry%%:*}"
+    REPO_NAME="${entry##*:}"
+    TARGET="$HOME/$HOME_NAME"
+    SOURCE="$DOTFILES_DIR/$REPO_NAME"
+
+    if [ -L "$TARGET" ]; then
+        if [ "$(readlink "$TARGET")" = "$SOURCE" ]; then
+            echo "  ✅ $HOME_NAME já é um link para $SOURCE"
+        else
+            mkdir -p "$BACKUP_DIR"
+            mv "$TARGET" "$BACKUP_DIR/${HOME_NAME}.symlink.bak"
+            ln -s "$SOURCE" "$TARGET"
+            echo "  🔗 Link atualizado: $TARGET -> $SOURCE"
+        fi
+    elif [ -f "$TARGET" ]; then
+        if [ -f "$SOURCE" ]; then
+            echo "  🔄 Atualizando $SOURCE com a versão ativa de $TARGET"
+            cp -a "$TARGET" "$SOURCE"
+            mkdir -p "$BACKUP_DIR"
+            mv "$TARGET" "$BACKUP_DIR/$HOME_NAME"
+        else
+            echo "  📂 Movendo $TARGET para $SOURCE"
+            mv "$TARGET" "$SOURCE"
+        fi
+        ln -s "$SOURCE" "$TARGET"
+        echo "  🔗 Link criado: $TARGET -> $SOURCE"
+    elif [ -f "$SOURCE" ]; then
+        ln -s "$SOURCE" "$TARGET"
+        echo "  🔗 Link criado: $TARGET -> $SOURCE"
+    fi
+done
+
+echo ""
+if [ -d "$BACKUP_DIR" ]; then
+    echo "🛡️  Backups de segurança salvos em: $BACKUP_DIR"
+fi
+echo "✅ Concluído! Agora qualquer edição em ~/.config reflete direto em $DOTFILES_DIR."

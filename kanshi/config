@@ -1,0 +1,23 @@
+#Perfil tela única, externa principal
+#profile docked {
+    #output eDP-1 disable
+    #output HDMI-A-1 mode 1920x1080@74.973Hz #position 0,0 enable
+#}
+
+#profile undocked {
+#    output eDP-1 enable
+#}
+
+
+profile docked {
+    # Tela interna (secundária, à esquerda)
+    output eDP-1 mode 1920x1080@60Hz position 0,0 enable
+
+    # Monitor externo (principal, à direita -> 1920px de deslocamento no X)
+    output HDMI-A-1 mode 1920x1080@74.973Hz position 1920,0 enable
+}
+
+profile undocked {
+    output eDP-1 position 0,0 enable
+}
+

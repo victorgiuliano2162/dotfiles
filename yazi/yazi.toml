@@ -1,0 +1,13 @@
+[preview]
+wrap = "yes"
+tab_size = 2
+max_width = 1000
+max_height = 1000
+image_filter = "triangle"
+image_quality = 75
+
+[opener]
+# Abre imagens com o visualizador padrão do sistema ao dar Enter
+open = [
+    { run = 'xdg-open "$@"', desc = "Open", orphan = true }
+]

@@ -14,7 +14,7 @@ set $down j
 set $up k
 set $right l
 # Your preferred terminal emulator
-set $term foot
+set $term kitty
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
@@ -25,7 +25,7 @@ include /etc/sway/config-vars.d/*
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+output * bg /home/victor/Pictures/Wallpapers/Wallpapers/wallhaven-rqyd8j_1920x1080.png fill
 #
 # Example configuration:
 #
@@ -152,7 +152,7 @@ input "type:pointer" {
 # Layout stuff:
 #
     # You can "split" the current object of your focus with
-    # $mod+b or $mod+v, for horizontal and vertical splits
+    # $mod+b or $mod+v, for horizontal and vertical splitsg
     # respectively.
     bindsym $mod+b splith
     bindsym $mod+v splitv
@@ -178,7 +178,7 @@ input "type:pointer" {
 #
     # Sway has a "scratchpad", which is a bag of holding for windows.
     # You can send windows there and get them back later.
-
+e
     # Move the currently focused window to the scratchpad
     bindsym $mod+Shift+minus move scratchpad
 
@@ -214,8 +214,15 @@ bindsym $mod+r mode "resize"
 # Status Bar:
 #
 # Read `man 5 sway-bar` for more information about this section.
-bar {
-    swaybar_command waybar
+#exec waybar &
+
+exec_always {
+    killall waybar
+    waybar &
+    autotiling
+}
+#bar {
+    #swaybar_command waybar
     # positio top
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
@@ -226,7 +233,7 @@ bar {
     #    background #323232
     #    inactive_workspace #32323200 #32323200 #5c5c5c
     #}
-}
+#}
 
 include /etc/sway/config.d/*
 
@@ -239,7 +246,19 @@ smart_gaps off
 smart_borders off
 
 # Define os espaçamentos (aumentei para 12px para o efeito ser bem visível)
-gaps inner 1
-gaps outer 2
+gaps inner 0
+gaps outer 1
 
 #corner_radius 8
+
+# Serviços de Portal Wayland para diálogos de arquivos (Brave/Chrome/Firefox)
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+exec systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+#exec /usr/libexec/xdg-desktop-portal-wlr &
+
+# Abrir controle de áudio e conexões em modo flutuante
+for_window [app_id="pavucontrol"] floating enable, resize set 700 500, move position center
+for_window [app_id="nm-connection-editor"] floating enable, resize set 600 500, move position center
+
+exec nm-applet --indicator &
+include ~/.config/sway/outputs
