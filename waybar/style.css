@@ -36,13 +36,26 @@ tooltip label {
   border-bottom: 2px solid #89b4fa;
 }
 
+#workspaces button.urgent {
+  color: #f38ba8;
+  border-bottom: 2px solid #f38ba8;
+}
+
+#mode {
+  padding: 0 8px;
+  color: #fab387;
+  border-bottom: 2px solid #fab387;
+}
+
 #cpu,
 #memory,
 #network,
 #language,
 #pulseaudio,
 #clock,
-#custom-weather {
+#custom-weather,
+#custom-notification,
+#custom-power {
   padding: 0 6px;
   color: #cdd6f4;
 }
@@ -54,88 +67,27 @@ tooltip label {
 }
 
 #tray {
-  padding-left: 8px;
+  padding: 0 8px;
 }
 
-#mpris,
-#custom-spotify {
+#mpris {
   color: #1db954;
   padding: 0 10px;
 }
 
-/* Erro 'F F' removido */
-#mpris.paused,
-#custom-spotify.paused {
+#mpris.paused {
   color: #a6a6a6;
 }
 
 /* Alertas de carga alta sem perder o estilo monobloco */
-#cpu.warning, #memory.warning {
+#cpu.warning,
+#memory.warning {
   color: #fab387;
 }
 
-#cpu.critical, #memory.critical {
+#cpu.critical,
+#memory.critical {
   color: #f38ba8;
-}
-
-
-/* Estilização da Janela do gsimplecal */
-window.gsimplecal {
-    background-color: #1e1e2e;
-    border: 1px solid #313244;
-    border-radius: 8px;
-    padding: 8px;
-}
-
-/* Área do Calendário */
-window.gsimplecal calendar {
-    background-color: #1e1e2e;
-    color: #cdd6f4;
-    border: none;
-    font-family: "0xProto Nerd Font Mono", monospace;
-    font-size: 13px;
-}
-
-/* Cabeçalho (Mês, Ano e Setas) */
-window.gsimplecal calendar.header {
-    background-color: #181825;
-    color: #89b4fa;
-    border-radius: 6px;
-}
-
-/* Setas de navegação de mês */
-window.gsimplecal calendar.button {
-    color: #cdd6f4;
-    background: transparent;
-}
-
-window.gsimplecal calendar.button:hover {
-    color: #89b4fa;
-}
-
-/* Dia Atual / Selecionado */
-window.gsimplecal calendar:selected {
-    background-color: #89b4fa;
-    color: #11111b;
-    border-radius: 4px;
-    font-weight: bold;
-}
-
-/* Dias fora do mês atual */
-window.gsimplecal calendar:indeterminate {
-    color: #585b70;
-}
-
-#cpu,
-#memory,
-#network,
-#language,
-#pulseaudio,
-#clock,
-#custom-weather,
-#custom-notification {
-  padding: 0px 6px;
-  color: #cdd6f4;
 }
 
 #custom-notification:hover {
@@ -146,8 +98,28 @@ window.gsimplecal calendar:indeterminate {
   color: #a6adc8;
 }
 
-#custom-notification {
-  padding-right: 12px;
-  /* ou se preferir empurrar o container: margin-right: 8px; */
+#custom-power {
+  padding: 0 12px 0 6px;
 }
 
+#custom-power:hover {
+  color: #f38ba8;
+}
+
+menu {
+  background-color: #1e1e2e;
+  border: 1px solid #313244;
+  border-radius: 6px;
+  padding: 4px;
+}
+
+menuitem {
+  color: #cdd6f4;
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+
+menuitem:hover {
+  background-color: #313244;
+  color: #89b4fa;
+}

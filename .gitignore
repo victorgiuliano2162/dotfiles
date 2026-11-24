@@ -11,3 +11,7 @@ swaync/old/
 # Estado interno e buffers do micro
 micro/buffers/
 micro/syntax/
+
+# Cache Python
+__pycache__/
+*.pyc

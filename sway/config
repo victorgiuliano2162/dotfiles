@@ -316,6 +316,7 @@ exec_always killall -q swayidle; swayidle -w \
     #}
 #}
 for_window [app_id="gsimplecal"] floating enable, border none, move position mouse
+for_window [app_id="waybar-audio-menu"] floating enable, border none, move position mouse, move left 180 px, move down 31 px
 include /etc/sway/config.d/*
 
 # Desativar barras de título antigas e definir bordas finas
